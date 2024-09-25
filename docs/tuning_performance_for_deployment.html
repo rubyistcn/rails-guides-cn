@@ -1,0 +1,471 @@
+<!doctype html>
+<html dir="ltr" lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tuning Performance for Deployment — Ruby on Rails Guides</title>
+  <link rel="stylesheet" type="text/css" href="stylesheets/style-9e7329e5b4c46ecb619db14d43a6724d.css" data-turbo-track="reload">
+  <link rel="stylesheet" type="text/css" href="stylesheets/print-a4d2686c548e59657450d04dc27f7787.css" media="print">
+  <link rel="stylesheet" type="text/css" href="stylesheets/highlight-a0d2133dd0073968b2d33b1f1360a2a3.css" data-turbo-track="reload">
+
+  <link rel="icon" href="images/favicon.ico" sizes="any">
+
+  <link rel="apple-touch-icon" href="images/icon.png">
+
+  <script src="javascripts/@hotwired--turbo-764f59c7edbeb902a9068c0340dd274e.js" data-turbo-track="reload"></script>
+  <script src="javascripts/clipboard-8b7aed6f069f0cf58eeae353cd2f898b.js" data-turbo-track="reload"></script>
+  <script src="javascripts/guides-be644dbd164a32c619aa8f714fc0b4bf.js" data-turbo-track="reload"></script>
+
+  <meta property="og:title" content="Tuning Performance for Deployment — Ruby on Rails Guides" />
+  <meta name="description" content="Tuning Performance for DeploymentThis guide covers performance and concurrency configuration for deploying your production Ruby on Rails application.After reading this guide, you will know: Whether to use Puma, the default application server How to configure important performance settings for Puma How to begin performance testing your application settings This guide focuses on web servers, which are the primary performance-sensitive component of most web applications. Other components like background jobs and WebSockets can be tuned but won&#39;t be covered by this guide.More information about how to configure your application can be found in the Configuration Guide." />
+  <meta property="og:description" content="Tuning Performance for DeploymentThis guide covers performance and concurrency configuration for deploying your production Ruby on Rails application.After reading this guide, you will know: Whether to use Puma, the default application server How to configure important performance settings for Puma How to begin performance testing your application settings This guide focuses on web servers, which are the primary performance-sensitive component of most web applications. Other components like background jobs and WebSockets can be tuned but won&#39;t be covered by this guide.More information about how to configure your application can be found in the Configuration Guide." />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:site_name" content="Ruby on Rails Guides" />
+  <meta property="og:image" content="https://avatars.githubusercontent.com/u/4223" />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@100..900&family=Noto+Sans+Arabic:wght@100..900&display=swap" rel="stylesheet">
+
+  <meta name="theme-color" content="#C81418">
+</head>
+
+<body class="guide">
+  <nav id="topNav" aria-label="Secondary">
+    <div class="wrapper">
+      <strong class="more-info-label">More at <a href="https://rubyonrails.org/">rubyonrails.org:</a> </strong>
+      <span class="red-button more-info-button">
+        More Ruby on Rails
+      </span>
+      <ul class="more-info-links s-hidden">
+        <li class="more-info"><a href="https://rubyonrails.org/blog">Blog</a></li>
+        <li class="more-info"><a href="https://guides.rubyonrails.org/">Guides</a></li>
+        <li class="more-info"><a href="https://api.rubyonrails.org/">API</a></li>
+        <li class="more-info"><a href="https://discuss.rubyonrails.org/">Forum</a></li>
+        <li class="more-info"><a href="https://github.com/rails/rails">Contribute on GitHub</a></li>
+      </ul>
+    </div>
+  </nav>
+  <header id="page_header">
+    <div class="wrapper clearfix">
+      <nav id="feature_nav">
+        <div class="header-logo">
+          <a href="index.html" title="Return to the Guides Home for Edge Guides">Guides</a>
+          <span id="version_switcher">
+            Version:
+            <select class="guides-version">
+              <option value="https://edgeguides.rubyonrails.org/" selected>Edge</option>
+                <option value="https://guides.rubyonrails.org/v7.2/">7.2</option>
+                <option value="https://guides.rubyonrails.org/v7.1/">7.1</option>
+                <option value="https://guides.rubyonrails.org/v7.0/">7.0</option>
+                <option value="https://guides.rubyonrails.org/v6.1/">6.1</option>
+                <option value="https://guides.rubyonrails.org/v6.0/">6.0</option>
+                <option value="https://guides.rubyonrails.org/v5.2/">5.2</option>
+                <option value="https://guides.rubyonrails.org/v5.1/">5.1</option>
+                <option value="https://guides.rubyonrails.org/v5.0/">5.0</option>
+                <option value="https://guides.rubyonrails.org/v4.2/">4.2</option>
+                <option value="https://guides.rubyonrails.org/v4.1/">4.1</option>
+                <option value="https://guides.rubyonrails.org/v4.0/">4.0</option>
+                <option value="https://guides.rubyonrails.org/v3.2/">3.2</option>
+                <option value="https://guides.rubyonrails.org/v3.1/">3.1</option>
+                <option value="https://guides.rubyonrails.org/v3.0/">3.0</option>
+                <option value="https://guides.rubyonrails.org/v2.3/">2.3</option>
+            </select>
+          </span>
+        </div>
+        <ul class="nav">
+          <li><a class="nav-item" id="home_nav" href="https://rubyonrails.org/">Home</a></li>
+          <li class="guides-index guides-index-large">
+            <a href="index.html" id="guidesMenu" class="guides-index-item nav-item">Guides Index</a>
+            <div id="guides" class="clearfix" style="display: none;">
+              <hr />
+              <dl class="guides-section-container">
+                  <div class="guides-section">
+                    <dt>Start Here</dt>
+                    <dd><a href="getting_started.html">Getting Started with Rails</a></dd>
+                  </div>
+                  <div class="guides-section">
+                    <dt>Models</dt>
+                    <dd><a href="active_record_basics.html">Active Record Basics</a></dd>
+                    <dd><a href="active_record_migrations.html">Active Record Migrations</a></dd>
+                    <dd><a href="active_record_validations.html">Active Record Validations</a></dd>
+                    <dd><a href="active_record_callbacks.html">Active Record Callbacks</a></dd>
+                    <dd><a href="association_basics.html">Active Record Associations</a></dd>
+                    <dd><a href="active_record_querying.html">Active Record Query Interface</a></dd>
+                    <dd><a href="active_model_basics.html">Active Model Basics</a></dd>
+                  </div>
+                  <div class="guides-section">
+                    <dt>Views</dt>
+                    <dd><a href="action_view_overview.html">Action View Overview</a></dd>
+                    <dd><a href="layouts_and_rendering.html">Layouts and Rendering in Rails</a></dd>
+                    <dd><a href="action_view_helpers.html">Action View Helpers</a></dd>
+                    <dd><a href="form_helpers.html">Action View Form Helpers</a></dd>
+                  </div>
+                  <div class="guides-section">
+                    <dt>Controllers</dt>
+                    <dd><a href="action_controller_overview.html">Action Controller Overview</a></dd>
+                    <dd><a href="routing.html">Rails Routing from the Outside In</a></dd>
+                  </div>
+                  <div class="guides-section">
+                    <dt>Other Components</dt>
+                    <dd><a href="active_support_core_extensions.html">Active Support Core Extensions</a></dd>
+                    <dd><a href="action_mailer_basics.html">Action Mailer Basics</a></dd>
+                    <dd><a href="action_mailbox_basics.html">Action Mailbox Basics</a></dd>
+                    <dd><a href="action_text_overview.html">Action Text Overview</a></dd>
+                    <dd><a href="active_job_basics.html">Active Job Basics</a></dd>
+                    <dd><a href="active_storage_overview.html">Active Storage Overview</a></dd>
+                    <dd><a href="action_cable_overview.html">Action Cable Overview</a></dd>
+                  </div>
+                  <div class="guides-section">
+                    <dt>Digging Deeper</dt>
+                    <dd><a href="i18n.html">Rails Internationalization (I18n) API</a></dd>
+                    <dd><a href="testing.html">Testing Rails Applications</a></dd>
+                    <dd><a href="security.html">Securing Rails Applications</a></dd>
+                    <dd><a href="error_reporting.html">Error Reporting in Rails Applications</a></dd>
+                    <dd><a href="debugging_rails_applications.html">Debugging Rails Applications</a></dd>
+                    <dd><a href="configuring.html">Configuring Rails Applications</a></dd>
+                    <dd><a href="command_line.html">The Rails Command Line</a></dd>
+                    <dd><a href="asset_pipeline.html">The Asset Pipeline</a></dd>
+                    <dd><a href="working_with_javascript_in_rails.html">Working with JavaScript in Rails</a></dd>
+                    <dd><a href="autoloading_and_reloading_constants.html">Autoloading and Reloading</a></dd>
+                    <dd><a href="caching_with_rails.html">Caching with Rails: An Overview</a></dd>
+                    <dd><a href="api_app.html">Using Rails for API-only Applications</a></dd>
+                    <dd><a href="tuning_performance_for_deployment.html">Tuning Performance for Deployment</a></dd>
+                  </div>
+                  <div class="guides-section">
+                    <dt>Advanced Active Record</dt>
+                    <dd><a href="active_record_multiple_databases.html">Multiple Databases</a></dd>
+                    <dd><a href="active_record_composite_primary_keys.html">Composite Primary Keys</a></dd>
+                  </div>
+                  <div class="guides-section">
+                    <dt>Extending Rails</dt>
+                    <dd><a href="rails_on_rack.html">Rails on Rack</a></dd>
+                    <dd><a href="generators.html">Creating and Customizing Rails Generators &amp; Templates</a></dd>
+                  </div>
+                  <div class="guides-section">
+                    <dt>Contributing</dt>
+                    <dd><a href="contributing_to_ruby_on_rails.html">Contributing to Ruby on Rails</a></dd>
+                    <dd><a href="api_documentation_guidelines.html">API Documentation Guidelines</a></dd>
+                    <dd><a href="ruby_on_rails_guides_guidelines.html">Guides Guidelines</a></dd>
+                    <dd><a href="development_dependencies_install.html">Installing Rails Core Development Dependencies</a></dd>
+                  </div>
+                  <div class="guides-section">
+                    <dt>Policies</dt>
+                    <dd><a href="maintenance_policy.html">Maintenance Policy</a></dd>
+                  </div>
+                  <div class="guides-section">
+                    <dt>Release Notes</dt>
+                    <dd><a href="upgrading_ruby_on_rails.html">Upgrading Ruby on Rails</a></dd>
+                    <dd><a href="7_2_release_notes.html">Version 7.2 - August 2024</a></dd>
+                    <dd><a href="7_1_release_notes.html">Version 7.1 - October 2023</a></dd>
+                    <dd><a href="7_0_release_notes.html">Version 7.0 - December 2021</a></dd>
+                    <dd><a href="6_1_release_notes.html">Version 6.1 - December 2020</a></dd>
+                    <dd><a href="6_0_release_notes.html">Version 6.0 - August 2019</a></dd>
+                    <dd><a href="5_2_release_notes.html">Version 5.2 - April 2018</a></dd>
+                    <dd><a href="5_1_release_notes.html">Version 5.1 - April 2017</a></dd>
+                    <dd><a href="5_0_release_notes.html">Version 5.0 - June 2016</a></dd>
+                    <dd><a href="4_2_release_notes.html">Version 4.2 - December 2014</a></dd>
+                    <dd><a href="4_1_release_notes.html">Version 4.1 - April 2014</a></dd>
+                    <dd><a href="4_0_release_notes.html">Version 4.0 - June 2013</a></dd>
+                    <dd><a href="3_2_release_notes.html">Version 3.2 - January 2012</a></dd>
+                    <dd><a href="3_1_release_notes.html">Version 3.1 - August 2011</a></dd>
+                    <dd><a href="3_0_release_notes.html">Version 3.0 - August 2010</a></dd>
+                    <dd><a href="2_3_release_notes.html">Version 2.3 - March 2009</a></dd>
+                    <dd><a href="2_2_release_notes.html">Version 2.2 - November 2008</a></dd>
+                  </div>
+              </dl>
+            </div>
+          </li>
+          <li><a class="nav-item" href="contributing_to_ruby_on_rails.html">Contribute</a></li>
+          <li class="guides-index guides-index-small">
+            <select class="guides-index-item nav-item">
+              <option value="index.html">Guides Index</option>
+                <optgroup label="Start Here">
+                    <option value="getting_started.html">Getting Started with Rails</option>
+                </optgroup>
+                <optgroup label="Models">
+                    <option value="active_record_basics.html">Active Record Basics</option>
+                    <option value="active_record_migrations.html">Active Record Migrations</option>
+                    <option value="active_record_validations.html">Active Record Validations</option>
+                    <option value="active_record_callbacks.html">Active Record Callbacks</option>
+                    <option value="association_basics.html">Active Record Associations</option>
+                    <option value="active_record_querying.html">Active Record Query Interface</option>
+                    <option value="active_model_basics.html">Active Model Basics</option>
+                </optgroup>
+                <optgroup label="Views">
+                    <option value="action_view_overview.html">Action View Overview</option>
+                    <option value="layouts_and_rendering.html">Layouts and Rendering in Rails</option>
+                    <option value="action_view_helpers.html">Action View Helpers</option>
+                    <option value="form_helpers.html">Action View Form Helpers</option>
+                </optgroup>
+                <optgroup label="Controllers">
+                    <option value="action_controller_overview.html">Action Controller Overview</option>
+                    <option value="routing.html">Rails Routing from the Outside In</option>
+                </optgroup>
+                <optgroup label="Other Components">
+                    <option value="active_support_core_extensions.html">Active Support Core Extensions</option>
+                    <option value="action_mailer_basics.html">Action Mailer Basics</option>
+                    <option value="action_mailbox_basics.html">Action Mailbox Basics</option>
+                    <option value="action_text_overview.html">Action Text Overview</option>
+                    <option value="active_job_basics.html">Active Job Basics</option>
+                    <option value="active_storage_overview.html">Active Storage Overview</option>
+                    <option value="action_cable_overview.html">Action Cable Overview</option>
+                </optgroup>
+                <optgroup label="Digging Deeper">
+                    <option value="i18n.html">Rails Internationalization (I18n) API</option>
+                    <option value="testing.html">Testing Rails Applications</option>
+                    <option value="security.html">Securing Rails Applications</option>
+                    <option value="error_reporting.html">Error Reporting in Rails Applications</option>
+                    <option value="debugging_rails_applications.html">Debugging Rails Applications</option>
+                    <option value="configuring.html">Configuring Rails Applications</option>
+                    <option value="command_line.html">The Rails Command Line</option>
+                    <option value="asset_pipeline.html">The Asset Pipeline</option>
+                    <option value="working_with_javascript_in_rails.html">Working with JavaScript in Rails</option>
+                    <option value="autoloading_and_reloading_constants.html">Autoloading and Reloading</option>
+                    <option value="caching_with_rails.html">Caching with Rails: An Overview</option>
+                    <option value="api_app.html">Using Rails for API-only Applications</option>
+                    <option value="tuning_performance_for_deployment.html">Tuning Performance for Deployment</option>
+                </optgroup>
+                <optgroup label="Advanced Active Record">
+                    <option value="active_record_multiple_databases.html">Multiple Databases</option>
+                    <option value="active_record_composite_primary_keys.html">Composite Primary Keys</option>
+                </optgroup>
+                <optgroup label="Extending Rails">
+                    <option value="rails_on_rack.html">Rails on Rack</option>
+                    <option value="generators.html">Creating and Customizing Rails Generators &amp; Templates</option>
+                </optgroup>
+                <optgroup label="Contributing">
+                    <option value="contributing_to_ruby_on_rails.html">Contributing to Ruby on Rails</option>
+                    <option value="api_documentation_guidelines.html">API Documentation Guidelines</option>
+                    <option value="ruby_on_rails_guides_guidelines.html">Guides Guidelines</option>
+                    <option value="development_dependencies_install.html">Installing Rails Core Development Dependencies</option>
+                </optgroup>
+                <optgroup label="Policies">
+                    <option value="maintenance_policy.html">Maintenance Policy</option>
+                </optgroup>
+                <optgroup label="Release Notes">
+                    <option value="upgrading_ruby_on_rails.html">Upgrading Ruby on Rails</option>
+                    <option value="7_2_release_notes.html">Version 7.2 - August 2024</option>
+                    <option value="7_1_release_notes.html">Version 7.1 - October 2023</option>
+                    <option value="7_0_release_notes.html">Version 7.0 - December 2021</option>
+                    <option value="6_1_release_notes.html">Version 6.1 - December 2020</option>
+                    <option value="6_0_release_notes.html">Version 6.0 - August 2019</option>
+                    <option value="5_2_release_notes.html">Version 5.2 - April 2018</option>
+                    <option value="5_1_release_notes.html">Version 5.1 - April 2017</option>
+                    <option value="5_0_release_notes.html">Version 5.0 - June 2016</option>
+                    <option value="4_2_release_notes.html">Version 4.2 - December 2014</option>
+                    <option value="4_1_release_notes.html">Version 4.1 - April 2014</option>
+                    <option value="4_0_release_notes.html">Version 4.0 - June 2013</option>
+                    <option value="3_2_release_notes.html">Version 3.2 - January 2012</option>
+                    <option value="3_1_release_notes.html">Version 3.1 - August 2011</option>
+                    <option value="3_0_release_notes.html">Version 3.0 - August 2010</option>
+                    <option value="2_3_release_notes.html">Version 2.3 - March 2009</option>
+                    <option value="2_2_release_notes.html">Version 2.2 - November 2008</option>
+                </optgroup>
+            </select>
+          </li>
+      </ul>
+      </nav>
+    </div>
+  </header>
+  <hr class="hide" />
+
+  <section id="feature">
+    <div class="wrapper">
+      <h1>Tuning Performance for Deployment</h1><p>This guide covers performance and concurrency configuration for deploying your production Ruby on Rails application.</p><p>After reading this guide, you will know:</p>
+<ul>
+<li>Whether to use Puma, the default application server</li>
+<li>How to configure important performance settings for Puma</li>
+<li>How to begin performance testing your application settings</li>
+</ul>
+<p>This guide focuses on web servers, which are the primary performance-sensitive component of most web applications. Other
+components like background jobs and WebSockets can be tuned but won&#39;t be covered by this guide.</p><p>More information about how to configure your application can be found in the <a href="configuring.html">Configuration Guide</a>.</p>
+
+                <nav id="subCol">
+            <h3 class="chapter">
+              <picture>
+                <!-- Using the `source`  HTML tag to set the dark theme image -->
+                <source
+                  srcset="images/icon_book-close-bookmark-1-wht.svg"
+                  media="(prefers-color-scheme: dark)"
+                />
+                <img src="images/icon_book-close-bookmark-1.svg" alt="Chapter Icon" />
+              </picture>
+              Chapters
+            </h3>
+            <ol class="chapters">
+<li><a href="#choosing-an-application-server">Choosing an Application Server</a></li>
+<li><a href="#what-to-optimize-for-questionmark">What to Optimize for?</a>
+
+<ul>
+<li><a href="#understanding-ruby-s-concurrency-and-parallelism">Understanding Ruby's Concurrency and Parallelism</a></li>
+<li><a href="#practical-implications">Practical Implications</a></li>
+</ul></li>
+<li><a href="#configurations">Configurations</a>
+
+<ul>
+<li><a href="#puma">Puma</a></li>
+<li><a href="#yjit">YJIT</a></li>
+<li><a href="#memory-allocators-and-configuration">Memory Allocators and Configuration</a></li>
+</ul></li>
+<li><a href="#performance-testing">Performance Testing</a>
+
+<ul>
+<li><a href="#what-to-measure">What to Measure</a></li>
+<li><a href="#production-measurement">Production Measurement</a></li>
+<li><a href="#load-testers">Load Testers</a></li>
+<li><a href="#what-you-can-change">What You Can Change</a></li>
+<li><a href="#warmup">Warmup</a></li>
+<li><a href="#which-requests">Which Requests</a></li>
+<li><a href="#what-to-look-for">What to Look For</a></li>
+</ul></li>
+</ol>
+
+          </nav>
+
+
+      <hr>
+    </div>
+  </section>
+
+  <main id="container">
+    <div class="wrapper">
+      <div id="mainCol">
+        <p>This guide assumes you are running <a href="https://ruby-lang.org">MRI</a>, the canonical implementation of Ruby also known as
+CRuby. If you're using another Ruby implementation such as JRuby or TruffleRuby, most of this guide doesn't apply.
+If needed, check sources specific to your Ruby implementation.</p><h2 id="choosing-an-application-server"><a class="anchorlink" href="#choosing-an-application-server"><span>1</span> Choosing an Application Server</a></h2><p>Puma is Rails' default application server and the most commonly used server across the community.
+It works well in most cases. In some cases, you may wish to change to another.</p><p>An application server uses a particular concurrency method.
+For example, Unicorn uses processes, Puma and Passenger are hybrid process- and thread-based concurrency, and Falcon
+uses fibers.</p><p>A full discussion of Ruby's concurrency methods is beyond the scope of this document, but the key tradeoffs between
+processes and threads will be presented.
+If you want to use a method other than processes and threads, you will need to use a different application server.</p><p>This guide will focus on how to tune Puma.</p><h2 id="what-to-optimize-for-questionmark"><a class="anchorlink" href="#what-to-optimize-for-questionmark"><span>2</span> What to Optimize for?</a></h2><p>In essence, tuning a Ruby web server is making a tradeoff between multiple properties such as memory usage, throughput,
+and latency.</p><p>The throughput is the measure of how many requests per second the server can handle, and latency is the measure of how
+long individual requests take (also referred to as response time).</p><p>Some users may want to maximize throughput to keep their hosting cost low, some other users may want to minimize latency
+to offer the best user experience, and many users will search for some compromise somewhere in the middle.</p><p>It is important to understand that optimizing for one property will generally hurt at least another one.</p><h3 id="understanding-ruby-s-concurrency-and-parallelism"><a class="anchorlink" href="#understanding-ruby-s-concurrency-and-parallelism"><span>2.1</span> Understanding Ruby's Concurrency and Parallelism</a></h3><p><a href="https://www.ruby-lang.org/en/">CRuby</a> has a <a href="https://en.wikipedia.org/wiki/Global_interpreter_lock">Global Interpreter Lock</a>,
+often called the GVL or GIL.
+The GVL prevents multiple threads from running Ruby code at the same time in a single process.
+Multiple threads can be waiting on network data, database operations, or some other non-Ruby work generally referred to
+as I/O operations, but only one can actively run Ruby code at a time.</p><p>This means that thread-based concurrency allows for increased throughput by concurrently processing web requests
+whenever they do I/O operations, but may degrade latency whenever an I/O operation completes. The thread that performed
+it may have to wait before it can resume executing Ruby code.
+Similarly, Ruby's garbage collector is "stop-the-world" so when it triggers all threads have to stop.</p><p>This also means that regardless of how many threads a Ruby process contains, it will never use more than a single CPU
+core.</p><p>Because of this, if your application only spends 50% of its time doing I/O operations, using more than 2 or 3 threads
+per process may severely hurt latency, and the gains in throughput will quickly hit diminishing returns.</p><p>Generally speaking, a well-crafted Rails application that isn't suffering from slow SQL queries or N+1 problems doesn't
+spend more than 50% of its time doing I/O operations, hence is unlikely to benefit from more than 3 threads.
+However, some applications that do call third-party APIs inline may spend a very large proportion of their time doing
+I/O operations and may benefit from more threads than that.</p><p>The way to achieve true parallelism with Ruby is to use multiple processes. As long as there is a free CPU core, Ruby
+processes don't have to wait on one another before resuming execution after an I/O operation is complete.
+However, processes only share a fraction of their memory via <a href="https://en.wikipedia.org/wiki/Copy-on-write">copy-on-write</a>,
+so one additional process uses more memory than an additional thread would.</p><p>Note that while threads are cheaper than processes, they are not free, and increasing the number of threads per process,
+also increases memory usage.</p><h3 id="practical-implications"><a class="anchorlink" href="#practical-implications"><span>2.2</span> Practical Implications</a></h3><p>Users interested in optimizing for throughput and server utilization will want to run one process per CPU core and
+increase the number of threads per process until the impact on latency is deemed too important.</p><p>Users interested in optimizing for latency will want to keep the number of threads per process low.
+To optimize for latency even further, users can even set the thread per process count to <code>1</code> and run <code>1.5</code> or <code>1.3</code>
+process per CPU core to account for when processes are idle waiting for I/O operations.</p><p>It is important to note that some hosting solutions may only offer a relatively small amount of memory (RAM) per CPU
+core, preventing you from running as many processes as needed to use all CPU cores.
+However, most hosting solutions have different plans with different ratios of memory and CPU.</p><p>Another thing to consider is that Ruby memory usage benefits from economies of scale thanks to
+<a href="https://en.wikipedia.org/wiki/Copy-on-write">copy-on-write</a>.
+So <code>2</code> servers with <code>32</code> Ruby processes each will use less memory per CPU core than <code>16</code> servers with <code>4</code> Ruby processes
+each.</p><h2 id="configurations"><a class="anchorlink" href="#configurations"><span>3</span> Configurations</a></h2><h3 id="puma"><a class="anchorlink" href="#puma"><span>3.1</span> Puma</a></h3><p>The Puma configuration resides in the <code>config/puma.rb</code> file.
+The two most important Puma configurations are the number of threads per process, and the number of processes,
+which Puma calls <code>workers</code>.</p><p>The number of threads per process is configured via the <code>thread</code> directive.
+In the default generated configuration, it is set to <code>3</code>.
+You can modify it either by setting the <code>RAILS_MAX_THREADS</code> environment variable or simply editing the configuration
+file.</p><p>The number of processes is configured by the <code>workers</code> directive.
+If you use more than one thread per process,&nbsp;then it should be set to how many CPU cores are available on the server,
+or if the server is running multiple applications, to how many cores you want the application to use.
+If you only use one thread per worker, then you can increase it to above one per process to account for when workers are
+idle waiting for I/O operations.</p><p>You can configure number of Puma workers by setting the <code>WEB_CONCURRENCY</code> environment variable.</p><h3 id="yjit"><a class="anchorlink" href="#yjit"><span>3.2</span> YJIT</a></h3><p>Recent Ruby versions come with a <a href="https://en.wikipedia.org/wiki/Just-in-time_compilation">Just-in-time compiler</a>
+called <a href="https://github.com/ruby/ruby/blob/master/doc/yjit/yjit.md"><code>YJIT</code></a>.</p><p>Without going into too many details, JIT compilers allow to execute code faster, at the expense of using some more
+memory.
+Unless you really cannot spare this extra memory usage, it is highly recommended to enable YJIT.</p><p>As for Rails 7.2, if your application is running on Ruby 3.3 or superior, YJIT will automatically be enabled by Rails
+by default.
+Older versions of Rails or Ruby have to enable it manually, please refer to the
+<a href="https://github.com/ruby/ruby/blob/master/doc/yjit/yjit.md"><code>YJIT documentation</code></a> about how to do it.</p><p>If the extra memory usage is a problem, before entirely disabling YJIT, you can try tuning it to use less memory via
+<a href="https://github.com/ruby/ruby/blob/master/doc/yjit/yjit.md#decreasing---yjit-exec-mem-size">the <code>--yjit-exec-mem-size</code> configuration</a>.</p><h3 id="memory-allocators-and-configuration"><a class="anchorlink" href="#memory-allocators-and-configuration"><span>3.3</span> Memory Allocators and Configuration</a></h3><p>Because of how the default memory allocator works on most Linux distributions, running Puma with multiple threads can
+lead to an unexpected increase in memory usage caused by <a href="https://en.wikipedia.org/wiki/Fragmentation_(computing)">memory fragmentation</a>.
+In turn, this increased memory usage may prevent your application from fully utilizing the server CPU cores.</p><p>To alleviate this problem, it is highly recommended to configure Ruby to use an alternative memory allocator:
+<a href="https://github.com/jemalloc/jemalloc">jemalloc</a>.</p><p>The default Dockerfile generated by Rails already comes preconfigured to install and use <code>jemalloc</code>. But if your hosting
+solution isn't Docker based, you should look into how to install and enable jemalloc there.</p><p>If for some reason that isn't possible, a less efficient alternative is to configure the default allocator in a way that
+reduces memory fragmentation by setting <code>MALLOC_ARENA_MAX=2</code> in your environment.
+Note however that this might make Ruby slower, so <code>jemalloc</code> is the preferred solution.</p><h2 id="performance-testing"><a class="anchorlink" href="#performance-testing"><span>4</span> Performance Testing</a></h2><p>Because every Rails application is different, and that every Rails user may want to optimize for different properties,
+it is impossible to offer a default configuration or guidelines that works best for everyone.</p><p>Hence, the best way to choose your application's settings is to measure the performance of your application, and adjust
+the configuration until it is satisfactory for your goals.</p><p>This can be done with a simulated production workload, or directly in production with live application traffic.</p><p>Performance testing is a deep subject. This guide gives only simple guidelines.</p><h3 id="what-to-measure"><a class="anchorlink" href="#what-to-measure"><span>4.1</span> What to Measure</a></h3><p>Throughput is the number of requests per second that your application successfully processes.
+Any good load testing program will measure it.
+A throughput is normally a single number expressed in "requests per second".</p><p>Latency is the delay from the time the request is sent until its response is successfully received, generally expressed
+in milliseconds.
+Each individual request will have its own latency.</p><p><a href="https://en.wikipedia.org/wiki/Percentile_rank">Percentile</a> latency gives the latency where a certain percentage of
+requests have better latency than that.
+For instance, <code>P90</code> is the 90th-percentile latency.
+The <code>P90</code> is the latency for a single load test where only 10% of requests took longer than that to process.
+The <code>P50</code> is the latency such that half your requests were slower, also called the median latency.</p><p>"Tail latency" refers to high-percentile latencies.
+For instance, the <code>P99</code> is the latency such that only 1% of your requests were worse.
+<code>P99</code> is a tail latency.
+<code>P50</code> is not a tail latency.</p><p>Generally speaking, the average latency isn't a good metric to optimize for.
+It is best to focus on median (<code>P50</code>) and tail (<code>P95</code> or <code>P99</code>) latency.</p><h3 id="production-measurement"><a class="anchorlink" href="#production-measurement"><span>4.2</span> Production Measurement</a></h3><p>If your production environment includes more than one server, it can be a good idea to do
+<a href="https://en.wikipedia.org/wiki/A/B_testing">A/B testing</a> there.
+For instance, you could run half of the servers with <code>3</code> threads per process, and the other half with <code>4</code> threads per
+process, and then use an application performance monitoring service to compare the throughput and latency of the two
+groups.</p><p>Application performance monitoring services are numerous, some are self-hosted, some are cloud solutions, and many offer
+a free tier plan.
+Recommending a particular one is beyond the scope of this guide.</p><h3 id="load-testers"><a class="anchorlink" href="#load-testers"><span>4.3</span> Load Testers</a></h3><p>You will need a load testing program to make requests of your application.
+This can be a dedicated load testing program of some kind, or you can write a small application to make HTTP requests
+and track how long they take.
+You should not normally check the time in your Rails log file.
+That time is only how long Rails took to process the request. It does not include time taken by the application server.</p><p>Sending many simultaneous requests and timing them can be difficult. It is easy to introduce subtle measurement errors.
+Normally you should use a load testing program, not write your own. Many load testers are simple to use and many
+excellent load testers are free.</p><h3 id="what-you-can-change"><a class="anchorlink" href="#what-you-can-change"><span>4.4</span> What You Can Change</a></h3><p>You can change the number of threads in your test to find the best tradeoff between throughput and latency for your
+application.</p><p>Larger hosts with more memory and CPU cores will need more processes for best usage.
+You can vary the size and type of hosts from a hosting provider.</p><p>Increasing the number of iterations will usually give a more exact answer, but require longer for testing.</p><p>You should test on the same type of host that will run in production.
+Testing on your development machine will only tell you what settings are best for that development machine.</p><h3 id="warmup"><a class="anchorlink" href="#warmup"><span>4.5</span> Warmup</a></h3><p>Your application should process a number of requests after startup that are not included in your final measurements.
+These requests are called "warmup" requests, and are usually much slower than later "steady-state" requests.</p><p>Your load testing program will usually support warmup requests. You can also run it more than once and throw away the
+first set of times.</p><p>You have enough warmup requests when increasing the number does not significantly change your result.
+<a href="https://arxiv.org/abs/1602.00602">The theory behind this can be complicated</a> but most common situations are
+straightforward: test several times with different amounts of warmup. See how many warmup iterations are needed before
+the results stay roughly the same.</p><p>Very long warmup can be useful for testing memory fragmentation and other issues that happen only after many requests.</p><h3 id="which-requests"><a class="anchorlink" href="#which-requests"><span>4.6</span> Which Requests</a></h3><p>Your application probably accepts many different HTTP requests.
+You should begin by load testing with just a few of them.
+You can add more kinds of requests over time.
+If a particular kind of request is too slow in your production application, you can add it to your load testing code.</p><p>A synthetic workload cannot perfectly match your application's production traffic.
+It is still helpful for testing configurations.</p><h3 id="what-to-look-for"><a class="anchorlink" href="#what-to-look-for"><span>4.7</span> What to Look For</a></h3><p>Your load testing program should allow you to check latencies, including percentile and tail latencies.</p><p>For different numbers of processes and threads, or different configurations in general, check the throughput and one or
+more latencies such as <code>P50</code>, <code>P90</code>, and <code>P99</code>.
+Increasing the threads will improve throughput up to a point, but worsen latency.</p><p>Choose a tradeoff between latency and throughput based on your application's needs.</p>
+        <hr>
+        <h3>Feedback</h3>
+        <p>
+          You're encouraged to help improve the quality of this guide.
+        </p>
+        <p>
+          Please contribute if you see any typos or factual errors.
+          To get started, you can read our <a href="https://edgeguides.rubyonrails.org/contributing_to_ruby_on_rails.html#contributing-to-the-rails-documentation">documentation contributions</a> section.
+        </p>
+        <p>
+          You may also find incomplete content or stuff that is not up to date.
+          Please do add any missing documentation for main. Make sure to check
+          <a href="https://edgeguides.rubyonrails.org">Edge Guides</a> first to verify
+          if the issues are already fixed or not on the main branch.
+          Check the <a href="ruby_on_rails_guides_guidelines.html">Ruby on Rails Guides Guidelines</a>
+          for style and conventions.
+        </p>
+        <p>
+          If for whatever reason you spot something to fix but cannot patch it yourself, please
+          <a href="https://github.com/rails/rails/issues">open an issue</a>.
+        </p>
+        <p>And last but not least, any kind of discussion regarding Ruby on Rails
+          documentation is very welcome on the <a href="https://discuss.rubyonrails.org/c/rubyonrails-docs">official Ruby on Rails Forum</a>.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <hr class="hide" />
+  <footer id="page_footer">
+    <div class="wrapper">
+      <p>This work is licensed under a <a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a> License</p>
+<p>"Rails", "Ruby on Rails", and the Rails logo are trademarks of David Heinemeier Hansson. All rights reserved.</p>
+
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,414 @@
+<!doctype html>
+<html dir="ltr" lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Getting Started with Dev Containers — Ruby on Rails Guides</title>
+  <link rel="stylesheet" type="text/css" href="stylesheets/style-9e7329e5b4c46ecb619db14d43a6724d.css" data-turbo-track="reload">
+  <link rel="stylesheet" type="text/css" href="stylesheets/print-a4d2686c548e59657450d04dc27f7787.css" media="print">
+  <link rel="stylesheet" type="text/css" href="stylesheets/highlight-a0d2133dd0073968b2d33b1f1360a2a3.css" data-turbo-track="reload">
+
+  <link rel="icon" href="images/favicon.ico" sizes="any">
+
+  <link rel="apple-touch-icon" href="images/icon.png">
+
+  <script src="javascripts/@hotwired--turbo-764f59c7edbeb902a9068c0340dd274e.js" data-turbo-track="reload"></script>
+  <script src="javascripts/clipboard-8b7aed6f069f0cf58eeae353cd2f898b.js" data-turbo-track="reload"></script>
+  <script src="javascripts/guides-be644dbd164a32c619aa8f714fc0b4bf.js" data-turbo-track="reload"></script>
+
+  <meta property="og:title" content="Getting Started with Dev Containers — Ruby on Rails Guides" />
+  <meta name="description" content="Getting Started with Dev ContainersAfter reading this guide, you will know: How to create a new Rails application with the rails-new tool. How to begin working with your application in a development container." />
+  <meta property="og:description" content="Getting Started with Dev ContainersAfter reading this guide, you will know: How to create a new Rails application with the rails-new tool. How to begin working with your application in a development container." />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:site_name" content="Ruby on Rails Guides" />
+  <meta property="og:image" content="https://avatars.githubusercontent.com/u/4223" />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@100..900&family=Noto+Sans+Arabic:wght@100..900&display=swap" rel="stylesheet">
+
+  <meta name="theme-color" content="#C81418">
+</head>
+
+<body class="guide">
+  <nav id="topNav" aria-label="Secondary">
+    <div class="wrapper">
+      <strong class="more-info-label">More at <a href="https://rubyonrails.org/">rubyonrails.org:</a> </strong>
+      <span class="red-button more-info-button">
+        More Ruby on Rails
+      </span>
+      <ul class="more-info-links s-hidden">
+        <li class="more-info"><a href="https://rubyonrails.org/blog">Blog</a></li>
+        <li class="more-info"><a href="https://guides.rubyonrails.org/">Guides</a></li>
+        <li class="more-info"><a href="https://api.rubyonrails.org/">API</a></li>
+        <li class="more-info"><a href="https://discuss.rubyonrails.org/">Forum</a></li>
+        <li class="more-info"><a href="https://github.com/rails/rails">Contribute on GitHub</a></li>
+      </ul>
+    </div>
+  </nav>
+  <header id="page_header">
+    <div class="wrapper clearfix">
+      <nav id="feature_nav">
+        <div class="header-logo">
+          <a href="index.html" title="Return to the Guides Home for Edge Guides">Guides</a>
+          <span id="version_switcher">
+            Version:
+            <select class="guides-version">
+              <option value="https://edgeguides.rubyonrails.org/" selected>Edge</option>
+                <option value="https://guides.rubyonrails.org/v7.2/">7.2</option>
+                <option value="https://guides.rubyonrails.org/v7.1/">7.1</option>
+                <option value="https://guides.rubyonrails.org/v7.0/">7.0</option>
+                <option value="https://guides.rubyonrails.org/v6.1/">6.1</option>
+                <option value="https://guides.rubyonrails.org/v6.0/">6.0</option>
+                <option value="https://guides.rubyonrails.org/v5.2/">5.2</option>
+                <option value="https://guides.rubyonrails.org/v5.1/">5.1</option>
+                <option value="https://guides.rubyonrails.org/v5.0/">5.0</option>
+                <option value="https://guides.rubyonrails.org/v4.2/">4.2</option>
+                <option value="https://guides.rubyonrails.org/v4.1/">4.1</option>
+                <option value="https://guides.rubyonrails.org/v4.0/">4.0</option>
+                <option value="https://guides.rubyonrails.org/v3.2/">3.2</option>
+                <option value="https://guides.rubyonrails.org/v3.1/">3.1</option>
+                <option value="https://guides.rubyonrails.org/v3.0/">3.0</option>
+                <option value="https://guides.rubyonrails.org/v2.3/">2.3</option>
+            </select>
+          </span>
+        </div>
+        <ul class="nav">
+          <li><a class="nav-item" id="home_nav" href="https://rubyonrails.org/">Home</a></li>
+          <li class="guides-index guides-index-large">
+            <a href="index.html" id="guidesMenu" class="guides-index-item nav-item">Guides Index</a>
+            <div id="guides" class="clearfix" style="display: none;">
+              <hr />
+              <dl class="guides-section-container">
+                  <div class="guides-section">
+                    <dt>Start Here</dt>
+                    <dd><a href="getting_started.html">Getting Started with Rails</a></dd>
+                  </div>
+                  <div class="guides-section">
+                    <dt>Models</dt>
+                    <dd><a href="active_record_basics.html">Active Record Basics</a></dd>
+                    <dd><a href="active_record_migrations.html">Active Record Migrations</a></dd>
+                    <dd><a href="active_record_validations.html">Active Record Validations</a></dd>
+                    <dd><a href="active_record_callbacks.html">Active Record Callbacks</a></dd>
+                    <dd><a href="association_basics.html">Active Record Associations</a></dd>
+                    <dd><a href="active_record_querying.html">Active Record Query Interface</a></dd>
+                    <dd><a href="active_model_basics.html">Active Model Basics</a></dd>
+                  </div>
+                  <div class="guides-section">
+                    <dt>Views</dt>
+                    <dd><a href="action_view_overview.html">Action View Overview</a></dd>
+                    <dd><a href="layouts_and_rendering.html">Layouts and Rendering in Rails</a></dd>
+                    <dd><a href="action_view_helpers.html">Action View Helpers</a></dd>
+                    <dd><a href="form_helpers.html">Action View Form Helpers</a></dd>
+                  </div>
+                  <div class="guides-section">
+                    <dt>Controllers</dt>
+                    <dd><a href="action_controller_overview.html">Action Controller Overview</a></dd>
+                    <dd><a href="routing.html">Rails Routing from the Outside In</a></dd>
+                  </div>
+                  <div class="guides-section">
+                    <dt>Other Components</dt>
+                    <dd><a href="active_support_core_extensions.html">Active Support Core Extensions</a></dd>
+                    <dd><a href="action_mailer_basics.html">Action Mailer Basics</a></dd>
+                    <dd><a href="action_mailbox_basics.html">Action Mailbox Basics</a></dd>
+                    <dd><a href="action_text_overview.html">Action Text Overview</a></dd>
+                    <dd><a href="active_job_basics.html">Active Job Basics</a></dd>
+                    <dd><a href="active_storage_overview.html">Active Storage Overview</a></dd>
+                    <dd><a href="action_cable_overview.html">Action Cable Overview</a></dd>
+                  </div>
+                  <div class="guides-section">
+                    <dt>Digging Deeper</dt>
+                    <dd><a href="i18n.html">Rails Internationalization (I18n) API</a></dd>
+                    <dd><a href="testing.html">Testing Rails Applications</a></dd>
+                    <dd><a href="security.html">Securing Rails Applications</a></dd>
+                    <dd><a href="error_reporting.html">Error Reporting in Rails Applications</a></dd>
+                    <dd><a href="debugging_rails_applications.html">Debugging Rails Applications</a></dd>
+                    <dd><a href="configuring.html">Configuring Rails Applications</a></dd>
+                    <dd><a href="command_line.html">The Rails Command Line</a></dd>
+                    <dd><a href="asset_pipeline.html">The Asset Pipeline</a></dd>
+                    <dd><a href="working_with_javascript_in_rails.html">Working with JavaScript in Rails</a></dd>
+                    <dd><a href="autoloading_and_reloading_constants.html">Autoloading and Reloading</a></dd>
+                    <dd><a href="caching_with_rails.html">Caching with Rails: An Overview</a></dd>
+                    <dd><a href="api_app.html">Using Rails for API-only Applications</a></dd>
+                    <dd><a href="tuning_performance_for_deployment.html">Tuning Performance for Deployment</a></dd>
+                  </div>
+                  <div class="guides-section">
+                    <dt>Advanced Active Record</dt>
+                    <dd><a href="active_record_multiple_databases.html">Multiple Databases</a></dd>
+                    <dd><a href="active_record_composite_primary_keys.html">Composite Primary Keys</a></dd>
+                  </div>
+                  <div class="guides-section">
+                    <dt>Extending Rails</dt>
+                    <dd><a href="rails_on_rack.html">Rails on Rack</a></dd>
+                    <dd><a href="generators.html">Creating and Customizing Rails Generators &amp; Templates</a></dd>
+                  </div>
+                  <div class="guides-section">
+                    <dt>Contributing</dt>
+                    <dd><a href="contributing_to_ruby_on_rails.html">Contributing to Ruby on Rails</a></dd>
+                    <dd><a href="api_documentation_guidelines.html">API Documentation Guidelines</a></dd>
+                    <dd><a href="ruby_on_rails_guides_guidelines.html">Guides Guidelines</a></dd>
+                    <dd><a href="development_dependencies_install.html">Installing Rails Core Development Dependencies</a></dd>
+                  </div>
+                  <div class="guides-section">
+                    <dt>Policies</dt>
+                    <dd><a href="maintenance_policy.html">Maintenance Policy</a></dd>
+                  </div>
+                  <div class="guides-section">
+                    <dt>Release Notes</dt>
+                    <dd><a href="upgrading_ruby_on_rails.html">Upgrading Ruby on Rails</a></dd>
+                    <dd><a href="7_2_release_notes.html">Version 7.2 - August 2024</a></dd>
+                    <dd><a href="7_1_release_notes.html">Version 7.1 - October 2023</a></dd>
+                    <dd><a href="7_0_release_notes.html">Version 7.0 - December 2021</a></dd>
+                    <dd><a href="6_1_release_notes.html">Version 6.1 - December 2020</a></dd>
+                    <dd><a href="6_0_release_notes.html">Version 6.0 - August 2019</a></dd>
+                    <dd><a href="5_2_release_notes.html">Version 5.2 - April 2018</a></dd>
+                    <dd><a href="5_1_release_notes.html">Version 5.1 - April 2017</a></dd>
+                    <dd><a href="5_0_release_notes.html">Version 5.0 - June 2016</a></dd>
+                    <dd><a href="4_2_release_notes.html">Version 4.2 - December 2014</a></dd>
+                    <dd><a href="4_1_release_notes.html">Version 4.1 - April 2014</a></dd>
+                    <dd><a href="4_0_release_notes.html">Version 4.0 - June 2013</a></dd>
+                    <dd><a href="3_2_release_notes.html">Version 3.2 - January 2012</a></dd>
+                    <dd><a href="3_1_release_notes.html">Version 3.1 - August 2011</a></dd>
+                    <dd><a href="3_0_release_notes.html">Version 3.0 - August 2010</a></dd>
+                    <dd><a href="2_3_release_notes.html">Version 2.3 - March 2009</a></dd>
+                    <dd><a href="2_2_release_notes.html">Version 2.2 - November 2008</a></dd>
+                  </div>
+              </dl>
+            </div>
+          </li>
+          <li><a class="nav-item" href="contributing_to_ruby_on_rails.html">Contribute</a></li>
+          <li class="guides-index guides-index-small">
+            <select class="guides-index-item nav-item">
+              <option value="index.html">Guides Index</option>
+                <optgroup label="Start Here">
+                    <option value="getting_started.html">Getting Started with Rails</option>
+                </optgroup>
+                <optgroup label="Models">
+                    <option value="active_record_basics.html">Active Record Basics</option>
+                    <option value="active_record_migrations.html">Active Record Migrations</option>
+                    <option value="active_record_validations.html">Active Record Validations</option>
+                    <option value="active_record_callbacks.html">Active Record Callbacks</option>
+                    <option value="association_basics.html">Active Record Associations</option>
+                    <option value="active_record_querying.html">Active Record Query Interface</option>
+                    <option value="active_model_basics.html">Active Model Basics</option>
+                </optgroup>
+                <optgroup label="Views">
+                    <option value="action_view_overview.html">Action View Overview</option>
+                    <option value="layouts_and_rendering.html">Layouts and Rendering in Rails</option>
+                    <option value="action_view_helpers.html">Action View Helpers</option>
+                    <option value="form_helpers.html">Action View Form Helpers</option>
+                </optgroup>
+                <optgroup label="Controllers">
+                    <option value="action_controller_overview.html">Action Controller Overview</option>
+                    <option value="routing.html">Rails Routing from the Outside In</option>
+                </optgroup>
+                <optgroup label="Other Components">
+                    <option value="active_support_core_extensions.html">Active Support Core Extensions</option>
+                    <option value="action_mailer_basics.html">Action Mailer Basics</option>
+                    <option value="action_mailbox_basics.html">Action Mailbox Basics</option>
+                    <option value="action_text_overview.html">Action Text Overview</option>
+                    <option value="active_job_basics.html">Active Job Basics</option>
+                    <option value="active_storage_overview.html">Active Storage Overview</option>
+                    <option value="action_cable_overview.html">Action Cable Overview</option>
+                </optgroup>
+                <optgroup label="Digging Deeper">
+                    <option value="i18n.html">Rails Internationalization (I18n) API</option>
+                    <option value="testing.html">Testing Rails Applications</option>
+                    <option value="security.html">Securing Rails Applications</option>
+                    <option value="error_reporting.html">Error Reporting in Rails Applications</option>
+                    <option value="debugging_rails_applications.html">Debugging Rails Applications</option>
+                    <option value="configuring.html">Configuring Rails Applications</option>
+                    <option value="command_line.html">The Rails Command Line</option>
+                    <option value="asset_pipeline.html">The Asset Pipeline</option>
+                    <option value="working_with_javascript_in_rails.html">Working with JavaScript in Rails</option>
+                    <option value="autoloading_and_reloading_constants.html">Autoloading and Reloading</option>
+                    <option value="caching_with_rails.html">Caching with Rails: An Overview</option>
+                    <option value="api_app.html">Using Rails for API-only Applications</option>
+                    <option value="tuning_performance_for_deployment.html">Tuning Performance for Deployment</option>
+                </optgroup>
+                <optgroup label="Advanced Active Record">
+                    <option value="active_record_multiple_databases.html">Multiple Databases</option>
+                    <option value="active_record_composite_primary_keys.html">Composite Primary Keys</option>
+                </optgroup>
+                <optgroup label="Extending Rails">
+                    <option value="rails_on_rack.html">Rails on Rack</option>
+                    <option value="generators.html">Creating and Customizing Rails Generators &amp; Templates</option>
+                </optgroup>
+                <optgroup label="Contributing">
+                    <option value="contributing_to_ruby_on_rails.html">Contributing to Ruby on Rails</option>
+                    <option value="api_documentation_guidelines.html">API Documentation Guidelines</option>
+                    <option value="ruby_on_rails_guides_guidelines.html">Guides Guidelines</option>
+                    <option value="development_dependencies_install.html">Installing Rails Core Development Dependencies</option>
+                </optgroup>
+                <optgroup label="Policies">
+                    <option value="maintenance_policy.html">Maintenance Policy</option>
+                </optgroup>
+                <optgroup label="Release Notes">
+                    <option value="upgrading_ruby_on_rails.html">Upgrading Ruby on Rails</option>
+                    <option value="7_2_release_notes.html">Version 7.2 - August 2024</option>
+                    <option value="7_1_release_notes.html">Version 7.1 - October 2023</option>
+                    <option value="7_0_release_notes.html">Version 7.0 - December 2021</option>
+                    <option value="6_1_release_notes.html">Version 6.1 - December 2020</option>
+                    <option value="6_0_release_notes.html">Version 6.0 - August 2019</option>
+                    <option value="5_2_release_notes.html">Version 5.2 - April 2018</option>
+                    <option value="5_1_release_notes.html">Version 5.1 - April 2017</option>
+                    <option value="5_0_release_notes.html">Version 5.0 - June 2016</option>
+                    <option value="4_2_release_notes.html">Version 4.2 - December 2014</option>
+                    <option value="4_1_release_notes.html">Version 4.1 - April 2014</option>
+                    <option value="4_0_release_notes.html">Version 4.0 - June 2013</option>
+                    <option value="3_2_release_notes.html">Version 3.2 - January 2012</option>
+                    <option value="3_1_release_notes.html">Version 3.1 - August 2011</option>
+                    <option value="3_0_release_notes.html">Version 3.0 - August 2010</option>
+                    <option value="2_3_release_notes.html">Version 2.3 - March 2009</option>
+                    <option value="2_2_release_notes.html">Version 2.2 - November 2008</option>
+                </optgroup>
+            </select>
+          </li>
+      </ul>
+      </nav>
+    </div>
+  </header>
+  <hr class="hide" />
+
+  <section id="feature">
+    <div class="wrapper">
+      <h1>Getting Started with Dev Containers</h1><p>After reading this guide, you will know:</p>
+<ul>
+<li>How to create a new Rails application with the <code>rails-new</code> tool.</li>
+<li>How to begin working with your application in a development container.</li>
+</ul>
+
+
+                <nav id="subCol">
+            <h3 class="chapter">
+              <picture>
+                <!-- Using the `source`  HTML tag to set the dark theme image -->
+                <source
+                  srcset="images/icon_book-close-bookmark-1-wht.svg"
+                  media="(prefers-color-scheme: dark)"
+                />
+                <img src="images/icon_book-close-bookmark-1.svg" alt="Chapter Icon" />
+              </picture>
+              Chapters
+            </h3>
+            <ol class="chapters">
+<li><a href="#setup-and-installation">Setup and Installation</a>
+
+<ul>
+<li><a href="#installing-docker">Installing Docker</a></li>
+<li><a href="#installing-vs-code">Installing VS Code</a></li>
+<li><a href="#installing-rails-new">Installing rails-new</a></li>
+</ul></li>
+<li><a href="#creating-the-blog-application">Creating the Blog Application</a></li>
+<li><a href="#opening-the-blog-application-in-a-dev-container">Opening the Blog Application in a Dev Container</a></li>
+</ol>
+
+          </nav>
+
+
+      <hr>
+    </div>
+  </section>
+
+  <main id="container">
+    <div class="wrapper">
+      <div id="mainCol">
+        <p>The best way to read this guide is to follow it step by step. All steps are
+essential to run this example application and no additional code or steps are
+needed.</p><p>This guide helps you get set up with <a href="https://containers.dev/">development containers (or dev containers for short)</a>
+for a full-featured development environment. Dev containers are used to run your
+Rails application in a container, without needing to install Ruby or Rails or its dependencies
+directly on your machine. This is the fastest way to get your Rails application up and running.</p><p>This is an alternative to installing Ruby and Rails directly on your machine, which is
+covered in the <a href="getting_started.html#creating-a-new-rails-project">Getting Started guides</a>.
+Once you have completed this guide, you can continue building your application by following
+the Getting Started guide.</p><h2 id="setup-and-installation"><a class="anchorlink" href="#setup-and-installation"><span>1</span> Setup and Installation</a></h2><p>To get set up, you will need to install the relevant tools; Docker, VS Code and
+<code>rails-new</code>. We'll go into details about each one below.</p><h3 id="installing-docker"><a class="anchorlink" href="#installing-docker"><span>1.1</span> Installing Docker</a></h3><p>Dev containers are run using Docker, an open platform for developing, shipping, and
+running applications. You can install Docker by following the installation instructions
+for your operating system in the <a href="https://docs.docker.com/desktop/">Docker docs</a>.</p><p>Once Docker has been installed, launch the Docker application to begin running
+the Docker engine on your machine.</p><h3 id="installing-vs-code"><a class="anchorlink" href="#installing-vs-code"><span>1.2</span> Installing VS Code</a></h3><p>Visual Studio Code (VS Code) is an open source code editor developed by Microsoft. VS Code's Dev Containers
+extension allows you to open any folder inside (or mounted into) a container and take advantage of
+Visual Studio Code's full feature set. A <a href="https://code.visualstudio.com/docs/devcontainers/containers#_create-a-devcontainerjson-file">devcontainer.json</a>
+file in your project tells VS Code how to access (or create) a development container with a
+well-defined tool and runtime stack. It allows you to quickly spin up containers, access terminal
+commands, debug code, and utilize extensions.</p><p>You can install VS Code by downloading it from <a href="https://code.visualstudio.com/">the website</a>.</p><p>You can install the Dev Containers extension by downloading it from <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers">the marketplace</a>.</p><h3 id="installing-rails-new"><a class="anchorlink" href="#installing-rails-new"><span>1.3</span> Installing rails-new</a></h3><p><code>rails-new</code> generates a new Rails application for you without having to install Ruby on
+your machine. It uses Docker to generate the Rails application, thus allowing Docker to
+take care of installing the correct Ruby and Rails versions for you.</p><p>To install <code>rails-new</code>, follow the installation instructions <a href="https://github.com/rails/rails-new?tab=readme-ov-file#installation">in the README</a>.</p><h2 id="creating-the-blog-application"><a class="anchorlink" href="#creating-the-blog-application"><span>2</span> Creating the Blog Application</a></h2><p>Rails comes with a number of scripts called generators that are designed to make
+your development life easier by creating everything that's necessary to start
+working on a particular task. One of these is the new application generator,
+which will provide you with the foundation of a fresh Rails application so that
+you don't have to write it yourself. The <code>rails-new</code> tool uses this generator to
+create a new Rails application for you.</p><div class="interstitial note"><p>The examples below use <code>$</code> to represent your terminal prompt in a UNIX-like OS,
+though it may have been customized to appear differently.</p></div><p>To use <code>rails-new</code> to generate your app, open a terminal, navigate to a directory where you have
+rights to create files, and run:</p><div class="interstitial code">
+<pre><code class="highlight console"><span class="gp">$</span><span class="w"> </span>rails-new blog <span class="nt">--devcontainer</span>
+</code></pre>
+<button class="clipboard-button" data-clipboard-text="rails-new blog --devcontainer
+">Copy</button>
+</div>
+<p>This will create a Rails application called Blog in a <code>blog</code> directory.</p><div class="interstitial info"><p>You can see all of the command line options that the Rails application
+generator accepts by running <code>rails-new --help</code>.</p></div><p>After you create the blog application, switch to its folder:</p><div class="interstitial code">
+<pre><code class="highlight console"><span class="gp">$</span><span class="w"> </span><span class="nb">cd </span>blog
+</code></pre>
+<button class="clipboard-button" data-clipboard-text="cd blog
+">Copy</button>
+</div>
+<p>The <code>blog</code> directory will have a number of generated files and folders that make
+up the structure of a Rails application. Most of the work in this tutorial will
+happen in the <code>app</code> folder. For a full rundown of everything in your application
+see the full <a href="getting_started.html#creating-the-blog-application">Getting Started guide</a>.</p><h2 id="opening-the-blog-application-in-a-dev-container"><a class="anchorlink" href="#opening-the-blog-application-in-a-dev-container"><span>3</span> Opening the Blog Application in a Dev Container</a></h2><p>Our new Rails application comes with a dev container already configured and ready to use.
+We will use VS Code to spin up and work with our dev container. Start by launching VS Code
+and opening your application.</p><p>Once the application opens, VS Code should prompt you that it has found a dev container
+configuration file, and you can reopen the folder in a dev container. Click the green "Reopen
+in Container" button to create the dev container.</p><p>Once the dev container setup is complete, your development environment is ready to use,
+with Ruby, Rails, and all your dependencies installed.</p><p>You can open the terminal within VS Code to verify that Rails is installed:</p><div class="interstitial code">
+<pre><code class="highlight console"><span class="gp">$</span><span class="w"> </span><span class="nb">rails</span> <span class="nt">--version</span>
+<span class="go">Rails 8.0.0
+</span></code></pre>
+<button class="clipboard-button" data-clipboard-text="rails --version
+">Copy</button>
+</div>
+<p>You can now continue with the <a href="getting_started.html#hello-rails">Getting Started guide</a> and
+begin building your Blog application. You will be working within VS Code, which serves as
+your entry point to your application's dev container, where you can run code, run tests, and
+run your application.</p>
+        <hr>
+        <h3>Feedback</h3>
+        <p>
+          You're encouraged to help improve the quality of this guide.
+        </p>
+        <p>
+          Please contribute if you see any typos or factual errors.
+          To get started, you can read our <a href="https://edgeguides.rubyonrails.org/contributing_to_ruby_on_rails.html#contributing-to-the-rails-documentation">documentation contributions</a> section.
+        </p>
+        <p>
+          You may also find incomplete content or stuff that is not up to date.
+          Please do add any missing documentation for main. Make sure to check
+          <a href="https://edgeguides.rubyonrails.org">Edge Guides</a> first to verify
+          if the issues are already fixed or not on the main branch.
+          Check the <a href="ruby_on_rails_guides_guidelines.html">Ruby on Rails Guides Guidelines</a>
+          for style and conventions.
+        </p>
+        <p>
+          If for whatever reason you spot something to fix but cannot patch it yourself, please
+          <a href="https://github.com/rails/rails/issues">open an issue</a>.
+        </p>
+        <p>And last but not least, any kind of discussion regarding Ruby on Rails
+          documentation is very welcome on the <a href="https://discuss.rubyonrails.org/c/rubyonrails-docs">official Ruby on Rails Forum</a>.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <hr class="hide" />
+  <footer id="page_footer">
+    <div class="wrapper">
+      <p>This work is licensed under a <a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a> License</p>
+<p>"Rails", "Ruby on Rails", and the Rails logo are trademarks of David Heinemeier Hansson. All rights reserved.</p>
+
+    </div>
+  </footer>
+</body>
+</html>
